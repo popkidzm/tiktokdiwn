@@ -3,53 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Downloader | GiftedTech</title>
+    <title>TikTok DL | Instant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gradient-text { background: linear-gradient(90deg, #ff0050, #00f2ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        body { background: #000; font-family: sans-serif; }
+        .app-container { max-width: 400px; width: 100%; margin: auto; }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-gradient { background: linear-gradient(90deg, #fe2c55, #25f4ee); color: black; font-weight: 900; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .loading-pulse { animation: pulse 1.5s infinite; }
     </style>
 </head>
-<body class="bg-[#020617] text-white min-h-screen flex flex-col items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-xl w-full">
-        <div class="text-center mb-8">
-            <h1 class="text-5xl font-black mb-2 gradient-text">Gifted DL</h1>
-            <p class="text-slate-400 text-sm tracking-widest uppercase">Premium TikTok Downloader</p>
+    <div class="app-container">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-black text-white tracking-tighter">TIK<span class="text-[#fe2c55]">TOK</span> SAVER</h1>
         </div>
 
-        <div class="glass-card p-2 rounded-2xl flex items-center mb-8 shadow-2xl focus-within:ring-2 focus-within:ring-pink-500/50 transition-all">
-            <input type="text" id="tiktokUrl" placeholder="Paste link here..." 
-                class="flex-1 bg-transparent p-4 outline-none text-white placeholder:text-slate-500">
-            <button onclick="fetchVideo()" id="fetchBtn"
-                class="bg-gradient-to-r from-[#ff0050] to-[#00f2ea] px-8 py-4 rounded-xl font-black uppercase text-xs tracking-tighter hover:opacity-90 transition transform active:scale-95 flex items-center gap-2">
-                <span>Fetch</span> <i class="fas fa-arrow-right"></i>
+        <div class="glass p-1.5 rounded-2xl flex items-center mb-4 shadow-xl">
+            <input type="text" id="tiktokUrl" placeholder="Paste link..." 
+                class="flex-1 bg-transparent p-3 outline-none text-white text-sm placeholder:text-gray-500">
+            <button onclick="fetchVideo()" id="fetchBtn" class="btn-gradient px-5 py-3 rounded-xl text-xs uppercase transition active:scale-90">
+                Go
             </button>
         </div>
 
-        <div id="loader" class="hidden text-center py-10">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-pink-500 border-r-2 border-transparent"></div>
+        <div id="loader" class="hidden text-center py-4">
+            <div class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest loading-pulse">Fetching Video Data...</div>
         </div>
 
-        <div id="resultCard" class="hidden glass-card rounded-3xl p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div class="flex gap-6 flex-col sm:flex-row">
-                <div class="relative group mx-auto sm:mx-0">
-                    <img id="videoThumb" class="w-40 h-56 object-cover rounded-2xl shadow-2xl border border-white/10" src="" alt="Thumbnail">
-                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/60 to-transparent"></div>
-                </div>
+        <div id="resultCard" class="hidden glass rounded-3xl p-4 animate-in fade-in zoom-in duration-300">
+            <div class="flex gap-4 items-center">
+                <img id="videoThumb" class="w-20 h-28 object-cover rounded-lg shadow-lg border border-white/10" src="" alt="">
                 
-                <div class="flex-1 text-center sm:text-left">
-                    <h2 id="videoTitle" class="font-bold text-xl mb-1 line-clamp-2">Video Title</h2>
-                    <p id="authorName" class="text-cyan-400 text-sm font-semibold mb-6">@username</p>
+                <div class="flex-1 overflow-hidden">
+                    <h2 id="videoTitle" class="text-white font-bold text-sm truncate mb-0.5">Title</h2>
+                    <p id="authorName" class="text-gray-400 text-[11px] mb-3">@username</p>
                     
-                    <div class="grid grid-cols-1 gap-3">
-                        <button id="downloadMP4" class="bg-white text-black hover:bg-slate-200 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all">
-                            <i class="fas fa-video"></i> Download Video
-                        </button>
-                        <button id="downloadMP3" class="bg-slate-800 hover:bg-slate-700 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all">
-                            <i class="fas fa-music"></i> Save Audio
+                    <div class="flex flex-col gap-2">
+                        <button id="downloadMP4" class="w-full bg-[#fe2c55] text-white py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 hover:opacity-90">
+                            <i class="fas fa-download"></i> <span id="dlText">Download Video</span>
                         </button>
                     </div>
                 </div>
