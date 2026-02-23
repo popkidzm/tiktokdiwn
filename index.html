@@ -3,47 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Video Downloader</title>
+    <title>TikTok Downloader | GiftedTech</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gradient-text { background: linear-gradient(90deg, #ff0050, #00f2ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center p-6">
+<body class="bg-[#020617] text-white min-h-screen flex flex-col items-center justify-center p-4">
 
-    <div class="max-w-2xl w-full text-center">
-        <h1 class="text-4xl md:text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-white to-cyan-400">
-            TikTok Downloader
-        </h1>
-        <p class="text-slate-400 mb-8">Download TikTok videos in high quality without watermarks.</p>
+    <div class="max-w-xl w-full">
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-black mb-2 gradient-text">Gifted DL</h1>
+            <p class="text-slate-400 text-sm tracking-widest uppercase">Premium TikTok Downloader</p>
+        </div>
 
-        <div class="relative group mb-6">
-            <input type="text" id="tiktokUrl" placeholder="Paste TikTok link here..." 
-                class="w-full p-4 pr-32 rounded-2xl bg-slate-900 border-2 border-slate-800 outline-none focus:border-pink-500 transition-all text-white shadow-2xl">
-            <button onclick="downloadVideo()" id="dlBtn"
-                class="absolute right-2 top-2 bottom-2 px-6 bg-pink-600 hover:bg-pink-700 rounded-xl font-bold transition flex items-center gap-2">
-                <i class="fas fa-download"></i> Fetch
+        <div class="glass-card p-2 rounded-2xl flex items-center mb-8 shadow-2xl focus-within:ring-2 focus-within:ring-pink-500/50 transition-all">
+            <input type="text" id="tiktokUrl" placeholder="Paste link here..." 
+                class="flex-1 bg-transparent p-4 outline-none text-white placeholder:text-slate-500">
+            <button onclick="fetchVideo()" id="fetchBtn"
+                class="bg-gradient-to-r from-[#ff0050] to-[#00f2ea] px-8 py-4 rounded-xl font-black uppercase text-xs tracking-tighter hover:opacity-90 transition transform active:scale-95 flex items-center gap-2">
+                <span>Fetch</span> <i class="fas fa-arrow-right"></i>
             </button>
         </div>
 
-        <div id="loader" class="hidden flex flex-col items-center py-10">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-pink-500 border-opacity-50 mb-4"></div>
-            <p class="text-slate-400">Processing video...</p>
+        <div id="loader" class="hidden text-center py-10">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-pink-500 border-r-2 border-transparent"></div>
         </div>
 
-        <div id="resultCard" class="hidden bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-2xl mt-6 animate-fade-in">
-            <div class="flex flex-col md:flex-row gap-6 items-center">
-                <img id="videoThumb" src="" alt="Thumbnail" class="w-40 h-56 object-cover rounded-xl shadow-lg bg-slate-800">
-                <div class="text-left flex-1">
-                    <h3 id="videoTitle" class="text-xl font-bold mb-2 line-clamp-2">Video Found!</h3>
-                    <p id="authorName" class="text-pink-400 text-sm mb-4 font-medium"></p>
+        <div id="resultCard" class="hidden glass-card rounded-3xl p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div class="flex gap-6 flex-col sm:flex-row">
+                <div class="relative group mx-auto sm:mx-0">
+                    <img id="videoThumb" class="w-40 h-56 object-cover rounded-2xl shadow-2xl border border-white/10" src="" alt="Thumbnail">
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+                
+                <div class="flex-1 text-center sm:text-left">
+                    <h2 id="videoTitle" class="font-bold text-xl mb-1 line-clamp-2">Video Title</h2>
+                    <p id="authorName" class="text-cyan-400 text-sm font-semibold mb-6">@username</p>
                     
-                    <div class="flex flex-wrap gap-3">
-                        <a id="hdDownload" href="#" target="_blank" download="tiktok_video.mp4"
-                            class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition flex-1 justify-center">
-                            <i class="fas fa-video"></i> Download MP4
-                        </a>
-                        <button onclick="resetForm()" class="bg-slate-800 hover:bg-slate-700 px-6 py-3 rounded-xl font-bold transition">
-                            Clear
+                    <div class="grid grid-cols-1 gap-3">
+                        <button id="downloadMP4" class="bg-white text-black hover:bg-slate-200 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all">
+                            <i class="fas fa-video"></i> Download Video
+                        </button>
+                        <button id="downloadMP3" class="bg-slate-800 hover:bg-slate-700 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all">
+                            <i class="fas fa-music"></i> Save Audio
                         </button>
                     </div>
                 </div>
@@ -51,6 +57,6 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
