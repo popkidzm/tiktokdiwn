@@ -4,41 +4,48 @@ window.fetchVideo = async () => {
     const loader = document.getElementById('loader');
     const resultCard = document.getElementById('resultCard');
 
-    if (!urlInput) return alert("Please paste a TikTok link!");
+    if (!urlInput) return;
 
-    // UI Feedback
     fetchBtn.disabled = true;
     loader.classList.remove('hidden');
     resultCard.classList.add('hidden');
 
     try {
-        // Using your GiftedTech API
         const apiUrl = `https://api.giftedtech.co.ke/api/download/tiktok?apikey=gifted&url=${encodeURIComponent(urlInput)}`;
         const { data } = await axios.get(apiUrl);
 
         if (data.success && data.result) {
             const res = data.result;
-
-            // Update UI elements based on API result
             document.getElementById('videoThumb').src = res.cover;
             document.getElementById('videoTitle').innerText = res.title || "TikTok Video";
             document.getElementById('authorName').innerText = "@" + (res.author?.name || "tiktok_user");
 
-            // Setup Download Buttons
             const mp4Btn = document.getElementById('downloadMP4');
-            const mp3Btn = document.getElementById('downloadMP3');
+            const dlText = document.getElementById('dlText');
 
-            // Force download using blob to avoid browser 'failed' errors
-            mp4Btn.onclick = () => downloadMedia(res.video, `video_${res.id}.mp4`);
-            mp3Btn.onclick = () => downloadMedia(res.music, `audio_${res.id}.mp3`);
+            // IMMEDIATE DOWNLOAD LOGIC
+            mp4Btn.onclick = async () => {
+                dlText.innerText = "Downloading...";
+                mp4Btn.disabled = true;
+                
+                try {
+                    await startImmediateDownload(res.video, `TikTok_${res.id}.mp4`);
+                    dlText.innerText = "Saved!";
+                } catch (e) {
+                    // Fallback if CORS blocks direct blob download
+                    window.location.href = res.video;
+                } finally {
+                    setTimeout(() => {
+                        dlText.innerText = "Download Video";
+                        mp4Btn.disabled = false;
+                    }, 2000);
+                }
+            };
 
             resultCard.classList.remove('hidden');
-        } else {
-            alert("API Error: " + (data.message || "Could not fetch video. Check the link."));
         }
     } catch (error) {
-        console.error("Fetch Error:", error);
-        alert("Server Error. Make sure the TikTok link is public.");
+        alert("Link error. Please try again.");
     } finally {
         fetchBtn.disabled = false;
         loader.classList.add('hidden');
@@ -46,18 +53,26 @@ window.fetchVideo = async () => {
 };
 
 /**
- * Handles the actual file download by opening in a new tab.
- * This is the most reliable method for TikTok CDN links on mobile.
+ * Fetches the video as a BLOB and triggers an immediate system download.
+ * This prevents opening a new tab.
  */
-function downloadMedia(fileUrl, fileName) {
-    if (!fileUrl) return alert("File link not found.");
+async function startImmediateDownload(videoUrl, filename) {
+    // 1. Fetch the data
+    const response = await fetch(videoUrl);
+    const blob = await response.blob();
     
-    // Attempting direct download via hidden link
-    const link = document.createElement('a');
-    link.href = fileUrl;
-    link.download = fileName;
-    link.target = "_blank"; // Fallback for browsers that block auto-download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // 2. Create a temporary local URL for the data
+    const url = window.URL.createObjectURL(blob);
+    
+    // 3. Create a hidden link and click it
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    
+    // 4. Cleanup
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
 }
